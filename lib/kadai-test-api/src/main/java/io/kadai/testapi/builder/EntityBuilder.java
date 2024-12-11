@@ -20,7 +20,7 @@ package io.kadai.testapi.builder;
 
 import io.kadai.common.api.security.UserPrincipal;
 import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
+import java.util.concurrent.Callable;
 import javax.security.auth.Subject;
 
 public interface EntityBuilder<EntityT, ServiceT> {
@@ -31,12 +31,12 @@ public interface EntityBuilder<EntityT, ServiceT> {
     return execAsUser(userId, () -> buildAndStore(service));
   }
 
-  private <T> T execAsUser(String userId, PrivilegedExceptionAction<T> runnable)
+  private <T> T execAsUser(String userId, Callable<T> runnable)
       throws PrivilegedActionException {
     Subject subject = new Subject();
     subject.getPrincipals().add(new UserPrincipal(userId));
 
-    return Subject.doAs(subject, runnable);
+    return Subject.callAs(subject, runnable);
   }
 
   interface SummaryEntityBuilder<SummaryEntityT, EntityT extends SummaryEntityT, ServiceT>

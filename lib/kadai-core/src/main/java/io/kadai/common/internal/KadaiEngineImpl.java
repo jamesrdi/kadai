@@ -76,7 +76,6 @@ import io.kadai.workbasket.internal.WorkbasketAccessMapper;
 import io.kadai.workbasket.internal.WorkbasketMapper;
 import io.kadai.workbasket.internal.WorkbasketQueryMapper;
 import io.kadai.workbasket.internal.WorkbasketServiceImpl;
-import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -86,6 +85,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import javax.security.auth.Subject;
 import org.apache.ibatis.mapping.Environment;
@@ -392,7 +392,7 @@ public class KadaiEngineImpl implements KadaiEngine {
     Subject subject = new Subject();
     subject.getPrincipals().add(new UserPrincipal(adminName));
 
-    return Subject.doAs(subject, (PrivilegedAction<T>) supplier::get);
+    return Subject.callAs(subject, (Callable<T>) supplier::get);
   }
 
   @Override
