@@ -10,6 +10,7 @@ import io.kadai.common.api.KadaiEngine.ConnectionManagementMode;
 import io.kadai.testapi.KadaiEngineProxy;
 import io.kadai.testapi.extensions.TestContainerExtension;
 import java.sql.Connection;
+import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.AfterEach;
@@ -212,7 +213,7 @@ public class KadaiEngineModesTest {
     }
 
     @Test
-    void should_NotRetrieveCreated_When_NotCommitted() {
+    void should_NotRetrieveCreated_When_NotCommitted() throws SQLException {
       TestUserMapper thisMapper =
           thisKadaiEngineProxy.getSqlSession().getMapper(TestUserMapper.class);
       TestUserMapper thatMapper =
@@ -223,6 +224,8 @@ public class KadaiEngineModesTest {
       thisKadaiEngineProxy
           .getEngine()
           .executeInDatabaseConnection(() -> thisMapper.insert(expected));
+
+      thisConnection.rollback();
 
       TestUser actual =
           thatKadaiEngineProxy

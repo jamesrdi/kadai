@@ -96,8 +96,8 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.session.SqlSessionManager;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 import org.apache.ibatis.type.JdbcType;
+import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -478,7 +478,7 @@ public class KadaiEngineImpl implements KadaiEngine {
    */
   private void createTransactionFactory(boolean useManagedTransactions) {
     if (useManagedTransactions) {
-      this.transactionFactory = new ManagedTransactionFactory();
+      this.transactionFactory = new SpringManagedTransactionFactory();
     } else {
       this.transactionFactory = new JdbcTransactionFactory();
     }
