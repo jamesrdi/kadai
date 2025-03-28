@@ -329,6 +329,36 @@ jobs:
       - name: Cancel workflow
         if: failure()
         uses: andymckay/cancel-action@0.5
+  add-copyright:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Add Copyright Headers
+        run: |
+          for file in $(find . -type f \( -name '*.java' -o -name '*.ts' \)); do
+            if ! grep -q "Copyright" "$file"; then
+              echo "Adding copyright to $file"
+              cat LICENSE_HEADER.txt "$file" > temp_file
+              mv temp_file "$file"
+            fi
+          done
+          for file in $(find . -type f -name '*.html'); do
+            if ! grep -q "Copyright" "$file"; then
+              echo "Adding copyright to $file"
+              cat LICENSE_HEADER_HTML.txt "$file" > temp_file
+              mv temp_file "$file"
+            fi
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Add missing copyright headers" || echo "No changes to commit"
+          git push
 
   release_artifacts:
     runs-on: ubuntu-22.04

@@ -1,0 +1,4 @@
+headerType: single
+commentStyle: java
+fileExtensions:
+  - ".java"
